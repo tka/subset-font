@@ -1,0 +1,5 @@
+php getSubset.php "abcABC" > 1.ttf
+
+or
+
+php getSubset.php latin1 "測試" > 1.ttf
