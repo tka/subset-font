@@ -1,0 +1,13 @@
+#!/usr/bin/env fontforge
+
+if ($argc < 3)
+  Print("usage: ", $0, " input.ttf output.ttf ")
+  Quit(1)
+endif
+
+Open($1,1)
+SelectAll()
+Copy()
+Generate($2)
+Close()
+Quit(1)

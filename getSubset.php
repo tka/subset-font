@@ -10,5 +10,12 @@ if($argv[1]=="latin1"){
     $str=$argv[1];
 }
 $fontData=$font->getSubset($str,$getLatin1);
-echo $fontData;
+$dir='tmp';
+$filename=$dir."/".md5($fontData);
+file_put_contents($filename.".ttf",$fontData);
+
+exec("./fixfont.pe $filename.ttf $filename-fix.ttf");
+exec("mv $filename-fix.ttf $filename.ttf");
+exec("ttf2eot $filename.ttf > $filename.eot");
+//echo $fontData;
 

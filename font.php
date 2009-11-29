@@ -72,14 +72,14 @@ class Font{
 		$glyphs[0]=$this->getGlyph(0);
 		//取得指定字元的的glyph
 		foreach($ords as $index=>$ord){
-			$glyphId=$this->getGlyphId($ord);
+            $glyphId=$this->getGlyphId($ord);
 			if($glyphId!==0){
 				$glyphIds[$ord]=$glyphId;
 				if(!isset($glyphs[$glyphId])){
 					$glyphs[$glyphId]=$this->getGlyph($glyphId);
 				}
 			}
-		}
+        }
 		foreach($glyphs as $glyphId=>$glyph){
 			$this->getComponentsByGlphy($glyph,$glyphs);
 		}
@@ -101,7 +101,7 @@ class Font{
 		$tables['prep']=$this->postTable->data;
 
 		$tables['gasp']=$this->gaspTable->data;
-		$tables['kern']=pack('nnnnn',0,1,0,6,1);//暫不處理kern table
+		//$tables['kern']=pack('nnnnn',0,1,0,6,1);//暫不處理kern table
 		//$tables['kern']=$this->kernTable->data;
 
 		$font=substr($this->data,0,12);
@@ -300,15 +300,15 @@ class glyf extends FontTable{
 	}
 	public function getComponentIdsByGlphy($data){
 		$components=array();
-		$strlen=strlen($data);
+        $strlen=strlen($data);
 		$offset=10;//format default
-		while($offset<$strlen){
+        while($offset<$strlen){
 			$glyphId=PackData::toUShort(substr($data,$offset+2,2));
 			$componentIds[]=$glyphId;
-			if(substr($data,$offset,2) & 0x0001){
-				$offset=$offset+8;//arg is word
+			if(PackData::toUShort(substr($data,$offset,2)) & 0x0001){
+				$offset=$offset+2+2+2+2;//flag+index+arg is word*2
 			}else{
-				$offset=$offset+6;// arg is byte
+				$offset=$offset+2+2+1+1;// arg is byte
 			}
 		}
 		return $componentIds;
@@ -322,7 +322,7 @@ class glyf extends FontTable{
 				for($offset=10;$offset<strlen($glyph);){
 					$flag=substr($glyph,$offset,2);
 					$componentId=PackData::toUShort(substr($glyph,$offset+2,2));
-					if($flag & 0x0001){
+                    if(PackData::toUShort($flag) & 0x0001){
 						$bin.= $flag.pack('n',indexOf($componentId,$oGlyphIds)).substr($glyph,$offset+4,4);
 						$offset=$offset+8;//arg is word
 					}else{
